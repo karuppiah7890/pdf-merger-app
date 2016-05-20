@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/karuppiah7890/pdf-merger-app#readme",
   "devDependencies": {
-    "electron-packager": "^7.0.2"
+    "electron-packager": "^7.0.2",
+    "electron-prebuilt": "^1.1.1"
   }
 }

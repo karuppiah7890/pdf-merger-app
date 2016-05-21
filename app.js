@@ -1,6 +1,9 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const ipc = electron.ipcMain;
+const dialog = electron.dialog;
+const merge = require('easy-pdf-merge');
 
 app.on('ready',function(){
   var mainWindow = new BrowserWindow({
@@ -9,5 +12,113 @@ app.on('ready',function(){
   });
 
   mainWindow.loadURL('file://' + __dirname + '/index.html');
+  //mainWindow.openDevTools();
+
+});
+
+ipc.on('src-files-dialog',function(event){
+
+      var window = BrowserWindow.fromWebContents(event.sender);
+
+      var srcFileChooseOptions = {
+        title : 'Choose the PDFs to merge',
+        buttonLabel : 'OK',
+        filters : [
+          {
+            name : 'PDFs',
+            extensions : ['pdf']
+          }
+        ],
+        properties : ['multiSelections']
+      };
+
+      var infoOptions = {
+        type : 'info',
+        title : 'Information',
+        message : 'Select atleast two PDFs to merge them!',
+        buttons : ['OK']
+      };
+
+      dialog.showOpenDialog(window,srcFileChooseOptions,function(files){
+
+        if(files)
+        {
+          if(files.length>=2)
+            event.sender.send('src-files-selected',files);
+
+          else
+            dialog.showMessageBox(window,infoOptions);
+        }
+      });
+
+});
+
+ipc.on('dest-file-dialog',function(event){
+
+      var window = BrowserWindow.fromWebContents(event.sender);
+
+      var destFileChooseOptions = {
+        title : 'Choose a destination for the merged PDF',
+        buttonLabel : 'OK',
+        filters : [
+          {
+            name : 'PDF',
+            extensions : ['pdf']
+          }
+        ],
+      };
+
+      dialog.showSaveDialog(window,destFileChooseOptions,function(file){
+
+        if(file)
+        event.sender.send('dest-file-selected',file);
+
+      });
+
+});
+
+ipc.on('merge',function(event,srcFiles,destFile){
+
+      var window = BrowserWindow.fromWebContents(event.sender);
+
+      merge(srcFiles,destFile,function(err){
+
+          var statusMessage = "";
+          var statusTitle = "";
+
+          if(err) {
+            console.log(err);
+            statusTitle = "Error!";
+            statusMessage = "Some error occured while merging";
+          }
+
+          else{
+            statusTitle = "Success!";
+            statusMessage = "Successfully merged";
+          }
+
+          var infoOptions = {
+            type : 'info',
+            title : statusTitle,
+            message : statusMessage,
+            buttons : ['OK']
+          };
+
+          dialog.showMessageBox(window,infoOptions);
+
+          if(err)
+            event.sender.send('merged-files',false);
+
+          else
+            event.sender.send('merged-files',true);
+      });
+
+
+
+
+
+
+
+
 
 });

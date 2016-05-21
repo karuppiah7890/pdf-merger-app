@@ -1,0 +1,15 @@
+body {
+  padding: 100px 100px 100px 100px;
+}
+
+#src-file-names {
+  display: none;
+}
+
+#dest-file-name {
+  display: none;
+}
+
+#merge-status {
+  display: none;
+}

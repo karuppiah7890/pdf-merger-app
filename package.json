@@ -1,5 +1,5 @@
 {
-  "name": "PDF Merger",
+  "name": "pdf-merger-app",
   "version": "0.1.1",
   "description": "A desktop app to merge PDFs into a single PDF easily.",
   "main": "app.js",

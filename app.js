@@ -32,23 +32,11 @@ ipc.on('src-files-dialog',function(event){
         properties : ['multiSelections']
       };
 
-      var infoOptions = {
-        type : 'info',
-        title : 'Information',
-        message : 'Select atleast two PDFs to merge them!',
-        buttons : ['OK']
-      };
-
       dialog.showOpenDialog(window,srcFileChooseOptions,function(files){
 
         if(files)
-        {
-          if(files.length>=2)
-            event.sender.send('src-files-selected',files);
+          event.sender.send('src-files-selected',files);
 
-          else
-            dialog.showMessageBox(window,infoOptions);
-        }
       });
 
 });
@@ -113,12 +101,19 @@ ipc.on('merge',function(event,srcFiles,destFile){
             event.sender.send('merged-files',true);
       });
 
+});
 
+ipc.on('show-message',function(event,messageBody){
 
+      var window = BrowserWindow.fromWebContents(event.sender);
+      
+      var infoOptions = {
+        type : 'info',
+        title : 'Information',
+        message : messageBody,
+        buttons : ['OK']
+      };
 
-
-
-
-
+      dialog.showMessageBox(window,infoOptions);
 
 });

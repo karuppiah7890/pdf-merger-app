@@ -29,7 +29,10 @@ ipc.on('src-files-dialog',function(event){
             extensions : ['pdf']
           }
         ],
-        properties : ['multiSelections']
+        properties : [
+          'multiSelections',
+          'openFile'
+        ]
       };
 
       dialog.showOpenDialog(window,srcFileChooseOptions,function(files){
